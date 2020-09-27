@@ -10,8 +10,8 @@
 #define __STOP_TRACE() {asm volatile (".inst 0x2520e040");}
 
 extern void bl_dtrmm_asm_sve_8x8 ( int k,
-        double *a,
-        long *b,
+        float *a,
+        double *b,
         double *c,
         unsigned long long ldc,
         void   *data,
@@ -111,12 +111,14 @@ void main()
 	example_sum_squares(1000, &sum);
 	printf("sum %d\n", sum);
 
-	double packA[16] = { 1.0, 1.1, 1.2, 1.3,
-                             2.0, 2.1, 2.2, 2.3 };
-        long packB[16];
+	float packA[16] = { 1.07, 1.142, 1.2034, 1.3005,
+                             2.06787, 2.10234, 2.234, 2.303345 };
+        double packB[16] = { -0.1, -0.2, -0.3, -0.4,
+                             -2.0, -2.1, -2.2, -2.3 };
         double C[64];
         int    k = 8;
 
+	printf("size of each element in A: %d\n", sizeof(packA[0]));
 	printf("Original A is:\n");
         printf("%f, %f, %f, %f\n", packA[0], packA[1], packA[2], packA[3]);
         printf("%f, %f, %f, %f\n", packA[4], packA[5], packA[6], packA[7]);
@@ -128,15 +130,11 @@ void main()
         bl_dtrmm_asm_sve_8x8( k, packA, packB, C, 0, NULL, 0 );
 	// __STOP_TRACE();
 
-	printf("Copied by ldr/str:\n");
-        printf("%f, %f, %f, %f\n", C[0], C[1], C[2], C[3]);
-        printf("%f, %f, %f, %f\n", C[4], C[5], C[6], C[7]);
-
-	printf("Copied by ld1d/str:\n");
-        // printf("%f, %f, %f, %f\n", packB[0], packB[1], packB[2], packB[3]);
-        // printf("%f, %f, %f, %f\n", packB[4], packB[5], packB[6], packB[7]);
-
-        printf("%ld, %ld, %ld, %ld\n", (long)packB[0], (long)packB[1], (long)packB[2], (long)packB[3]);
+	// converted to double:
+	printf("size of each element in B: %d\n", sizeof(packB[0]));
+	printf("Converted B is:\n");
+        printf("%f, %f, %f, %f\n", packB[0], packB[1], packB[2], packB[3]);
+        printf("%f, %f, %f, %f\n", packB[4], packB[5], packB[6], packB[7]);
 	// test svld1_f64();
 	test_svld1_f64();
 	// how assembly divide

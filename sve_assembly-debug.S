@@ -102,9 +102,9 @@ FUNC:
     b       .Ldtrmm_loading_c_BEGIN
 
 .Ldtrmm_loading_c_END:
-    // str     tmp_counter, [feedback]    // returns total l loops
 
-    // load from packA
+#if 0
+// load from packA
     ldr z0, [x1]
     ldr z1, [x1, #1, MUL VL]
 
@@ -115,11 +115,12 @@ FUNC:
     // store to C
     str z0, [x3]
     str z1, [x3, #1, MUL VL]
+#endif
 
-#if 1
-    // test %12 loop
+#if 0
+// test %12 loop
     mov x9, #130
-    mov x10, x9             // x10 is the remainder, 
+    mov x10, x9              // x10 is the remainder,
     mov x11, #0              // x11 is the quotient
     subs x10, x10, #12
     blt .L8_M8_BEGIN
@@ -134,6 +135,16 @@ FUNC:
     // store x10 and x11
     stp x11, x10, [x2]
 #endif
+
+#if 1
+// testing of convert single to double
+    // assume [x1] is a single-precision matrix address. source.
+    // assume [x2] is a double-precision matrix address. destination.
+    ld1w z1.d, p0/z, [x1]
+    fcvt z1.d, p0/m, z1.s
+    st1d z1.d, p0,   [x2]
+#endif
+
     // test how disassembly goes
     dup z2.d, #0
 
