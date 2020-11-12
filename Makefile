@@ -5,7 +5,7 @@ CC=gcc
 # ok OPTS?=-O3 -fopt-info-vec-optimized -fopt-info-vec-missed 
 # ok OPTS?=-O3 -fopt-info-vec-optimized -fopt-info-vec-missed 
 # ok OPTS?=-O3 -fopt-info-vec-note -fopt-info-vec-optimized -fopt-info-vec-missed 
-OPTS?=-O3 -fopt-info-vec-optimized-missed=vec.opt.log #-fopt-info-vec-missed 
+OPTS?=-O3 -fopenmp -fopt-info-vec-optimized-missed=vec.opt.log #-fopt-info-vec-missed
 
 CFLAGS=-I. -march=armv8.2-a+sve
 DEPS =

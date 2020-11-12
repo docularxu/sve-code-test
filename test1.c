@@ -136,10 +136,26 @@ void main()
         printf("%f, %f, %f, %f\n", packB[0], packB[1], packB[2], packB[3]);
         printf("%f, %f, %f, %f\n", packB[4], packB[5], packB[6], packB[7]);
 	// test svld1_f64();
-	test_svld1_f64();
+	// test_svld1_f64();
 	// how assembly divide
-	test_divide_12( sum );
+	// test_divide_12( sum );
 	// vectorize test
 	vect_foo();
-
+	// parallel with OpenMP
+	#pragma omp parallel for
+	for ( int j = 0; j < 4; j++ )
+	{
+		printf("j = %d, ThreadId = %d\n", j, omp_get_thread_num());
+	}
+	#pragma omp parallel sections
+	{
+	#pragma omp section
+	printf("section 1 ThreadId = %d\n", omp_get_thread_num());
+	#pragma omp section
+	printf("section 2 ThreadId = %d\n", omp_get_thread_num());
+	#pragma omp section
+	printf("section 3 ThreadId = %d\n", omp_get_thread_num());
+	#pragma omp section
+	printf("section 4 ThreadId = %d\n", omp_get_thread_num());
+	}
 }
