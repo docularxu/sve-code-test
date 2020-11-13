@@ -5,6 +5,7 @@
 #endif /* __ARM_FEATURE_SVE */
 
 #include <stdio.h>
+#include <omp.h>
 
 #define __START_TRACE() {asm volatile (".inst 0x2520e020");}
 #define __STOP_TRACE() {asm volatile (".inst 0x2520e040");}
@@ -141,21 +142,27 @@ void main()
 	// test_divide_12( sum );
 	// vectorize test
 	vect_foo();
+
 	// parallel with OpenMP
+	omp_set_num_threads(5);
 	#pragma omp parallel for
 	for ( int j = 0; j < 4; j++ )
 	{
+		printf("OpenMP number of threads: %d\n", omp_get_num_threads());
 		printf("j = %d, ThreadId = %d\n", j, omp_get_thread_num());
 	}
 	#pragma omp parallel sections
 	{
-	#pragma omp section
-	printf("section 1 ThreadId = %d\n", omp_get_thread_num());
-	#pragma omp section
-	printf("section 2 ThreadId = %d\n", omp_get_thread_num());
-	#pragma omp section
-	printf("section 3 ThreadId = %d\n", omp_get_thread_num());
-	#pragma omp section
-	printf("section 4 ThreadId = %d\n", omp_get_thread_num());
+		#pragma omp section
+		printf("section 1 ThreadId = %d\n", omp_get_thread_num());
+		#pragma omp section
+		printf("section 2 ThreadId = %d\n", omp_get_thread_num());
+		#pragma omp section
+		printf("section 3 ThreadId = %d\n", omp_get_thread_num());
+		#pragma omp section
+		{
+			printf("OpenMP number of threads: %d\n", omp_get_num_threads());
+			printf("section 4 ThreadId = %d\n", omp_get_thread_num());
+		}
 	}
 }
