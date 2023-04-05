@@ -145,7 +145,8 @@ void main()
 
 	// parallel with OpenMP
 	omp_set_num_threads(5);
-	#pragma omp parallel for
+	printf("Number of processors: %d\n", omp_get_num_procs());
+	#pragma omp parallel for ordered
 	for ( int j = 0; j < 4; j++ )
 	{
 		printf("OpenMP number of threads: %d\n", omp_get_num_threads());
